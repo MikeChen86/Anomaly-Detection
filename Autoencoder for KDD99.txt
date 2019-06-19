@@ -1,0 +1,156 @@
+Autoencoder for KDD99
+
+# Model 1:
+Loss function : MSE
+Layer1(Input layer): 41 neurons / ReLu
+Layer2(Code): 5 neurons / ReLu
+Layer3(Output layer): 41 neurons / ReLu
+
+	# Test anomaly class is "smurf"
+	Max Loss of Training Data = 20834.87890625
+	Min Loss of Testing Data = 2.748781681060791
+	Average Loss of Training Data = 825.5699288118612
+	Average Loss of Testing Data = 13455.048813324594
+
+# Model 2:
+Loss function : MAE
+Layer1(Input layer): 41 neurons / ReLu
+Layer2(Encode layer): 20 neurons / ReLu
+Layer3(Code): 5 neurons / ReLu
+Layer4(Decode layer): 20 neurons / ReLu
+Layer5(Output layer): 41 neurons / ReLu
+
+	# Test anomaly class is "smurf"
+	# 30000 Data
+	Max Loss of Training Data = 539.4713745117188
+	Min Loss of Testing Data = 2.7511508464813232
+	Average Loss of Training Data = 36.28837764861805
+	Average Loss of Testing Data = 8156.210343633711
+
+	# All Data
+	Max Loss of Training Data = 17067744.0
+	Min Loss of Testing Data = 16.326486587524414
+	Average Loss of Training Data = 157.62153113103295
+	Average Loss of Testing Data = 57.74481838104999
+
+# Model 3:
+Loss function : MSE
+Layer1(Input layer): 41 neurons / tanh
+Layer2(Encode layer): 20 neurons / tanh
+Layer3(Code): 2 neurons / tanh
+Layer4(Decode layer): 20 neurons / tanh
+Layer5(Output layer): 41 neurons / tanh
+	
+	# Test anomaly class is "guess_passwd" : 53
+	# Test normal class is "normal" : 97278
+	# All Data
+	Max Loss of Training Data = 642931949568.0
+	Min Loss of Testing Data = 1227.306640625
+	Average Loss of Training Data = 63372774.9789746
+	Average Loss of Testing Data = 3218.4200232163917
+
+# Model 4:
+Loss function : MSE
+Layer1(Input layer): 41 neurons / tanh
+Layer3(Code): 2 neurons / tanh
+Layer5(Output layer): 41 neurons / tanh
+	
+	# Test anomaly class is "guess_passwd" : 53
+	# Test normal class is "normal" : 97278
+	# All Data
+	Max Loss of Training Data = 642931949568.0
+	Min Loss of Testing Data = 1227.3031005859375
+	Average Loss of Training Data = 63372775.01187943
+	Average Loss of Testing Data = 3218.381338443396
+
+# Model 5:
+Loss function : MSE
+Layer1(Input layer): 41 neurons / tanh
+Layer2(Encode layer): 20 neurons / tanh
+Layer3(Code): 2 neurons / tanh
+Layer4(Decode layer): 20 neurons / tanh
+Layer5(Output layer): 41 neurons
+	
+	# Test anomaly class is "guess_passwd" : 53
+	# Test normal class is "normal" : 97278
+	# All Data
+	Max Loss of Training Data = 642602696704.0
+	Min Loss of Testing Data = 537.6484375
+	Average Loss of Training Data = 63154058.74434985
+	Average Loss of Testing Data = 1176.6715295179836
+
+
+# Model 6:
+Loss function : MSE
+Layer1(Input layer): 41 neurons
+Layer2(Encode layer): 20 neurons / tanh
+Layer3(Code): 2 neurons / tanh
+Layer4(Decode layer): 20 neurons / tanh
+Layer5(Output layer): 41 neurons
+	
+	# Test anomaly class is "smurf" : 3695
+	# 30000 Data
+	Max Loss of Training Data = 642602696704.0
+	Min Loss of Testing Data = 537.6484375
+	Average Loss of Training Data = 63154058.74434985
+	Average Loss of Testing Data = 1176.6715295179836
+
+# Model 7:
+Preprocessing: z-score
+Loss function : MSE
+Optimaizer : adam
+Layer1(Input layer): 41 neurons
+Layer2(Encode layer): 20 neurons / sigmoid
+Layer3(Encode layer): 5 neurons / sigmoid
+Layer4(Code): 2 neurons / sigmoid
+Layer5(Decode layer): 5 neurons / sigmoid
+Layer6(Decode layer): 20 neurons / sigmoid
+Layer7(Output layer): 41 neurons
+	
+	# Test anomaly class is "smurf" : 3695
+	# 30000 Data
+	Max Loss of Training Data:697.0772705078125
+	Min Loss of Testing Data:2.564366579055786
+	Average Loss of Training Data = 0.18361121038236136
+	Average Loss of Testing Data = 12.403299890383325
+
+
+# Model 7:
+Preprocessing: z-score
+Loss function : MSE
+Optimaizer : adam
+Layer1(Input layer): 41 neurons
+Layer2(Encode layer): 20 neurons / tanh
+Layer3(Code): 2 neurons / tanh
+Layer4(Decode layer): 20 neurons / tanh
+Layer5(Output layer): 41 neurons
+	
+	# Test anomaly class is "smurf" : 3695
+	# Test normal class is "normal" : 26072
+	# 30000 Data
+	Max Loss of Training Data = 649.6415405273438
+	Min Loss of Testing Data = 2.4448492527008057
+	Average Loss of Training Data = 0.13180820938620172
+	Average Loss of Testing Data = 34.68877888689138
+---------------------------------------------------------
+	# Test anomaly class is "smurf" : 280790
+	# Test normal class is "normal" : 97278
+	# All Data
+	Max Loss of Training Data = 14553.30078125
+	Min Loss of Testing Data = 26.141319274902344
+	Average Loss of Training Data = 0.829985674041143
+	Average Loss of Testing Data = 37.273044882317485
+
+	THRESHOLD = 26
+	FNR = 114 / 97278
+---------------------------------------------------------
+	# Test anomaly class is "smurf" : 280790
+	# Test normal class is All : 213231
+	# All Data
+	Max Loss of Training Data = 14425.6328125
+	Min Loss of Testing Data = 0.30811968445777893
+	Average Loss of Training Data = 0.5995111613815586
+	Average Loss of Testing Data = 1.1556142783393386
+
+	THRESHOLD = 26
+	FNR = 234 / 97278 (normal)

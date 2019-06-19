@@ -1,6 +1,10 @@
 from keras.utils import to_categorical
 from sklearn.datasets import kddcup99
+from sklearn import preprocessing
 
+
+def z_score(array):
+    return preprocessing.scale(array)
 
 # 定義kdd99數據預處理函數
 def preprocess_data(data_source):
@@ -10,6 +14,7 @@ def preprocess_data(data_source):
         data[i][1] = handle_protocol(row)  # 將源文件行中3種協議類型轉換成數字標識
         data[i][2] = handle_service(row)  # 將源文件行中70種網絡服務類型轉換成數字標識
         data[i][3] = handle_flag(row)  # 將源文件行中11種網絡連接狀態轉換成數字標識
+    data = z_score(data)
     return data
 
 

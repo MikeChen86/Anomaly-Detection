@@ -17,54 +17,53 @@ if __name__ == '__main__':
 
     # 數據預處理
     data = preprocess_data(data)
-    labels = preprocess_target(labels)  # 進行OneHot編碼
 
     # parameter
     DATA_LENGTH = data.shape[0]
-    INPUT_SHAPE = 41
-    ENCODE_UNITS = 20
-    NEW_CLASS = label_list.index('guess_passwd.')
+    NEW_CLASS = b'smurf.'
     CODES = 5
+    THRESHOLD = 26
     # parameter
 
-    count = 0
-    count_ = 0
-    for each in labels[:DATA_LENGTH]:
-        if each[NEW_CLASS] == 1:
-            count = count + 1
-        elif each[0] == 1:
-            count_ = count_ + 1
+    input_data_test_set = list()
+    input_data_train_set = list()
 
-    input_data_test_set = np.zeros(shape=(count, 41))
-    input_data_train_set = np.zeros(shape=(count_, 41))
-    count = 0
-    count_ = 0
-    for index, each in enumerate(labels[:DATA_LENGTH]):
-        if each[NEW_CLASS] == 1:
-            input_data_test_set[count] = data[index]
-            count = count + 1
-        elif each[0] == 1:
-            input_data_train_set[count_] = data[index]
-            count_ = count_ + 1
+    for index, each in enumerate(labels):
+        if each == NEW_CLASS:
+            input_data_test_set.append(data[index])
+        else:
+            input_data_train_set.append(data[index])
+
+    input_data_test_set = np.array(input_data_test_set)
+    input_data_train_set = np.array(input_data_train_set)
 
     autoencoder = load_model('autoencoder.h5')
 
     autoencoder.summary()
 
     max_loss = None
-    for index in range(count_):
+    count = 0
+    fn_label = [0 for each in label_list]
+    for index in range(input_data_train_set.shape[0]):
         try:
             loss = autoencoder.evaluate(input_data_train_set[index:index + 1], input_data_train_set[index:index + 1],
                                            verbose=0)
             if not max_loss or max_loss < loss:
                 max_loss = loss
+            if loss > THRESHOLD:
+                fn_label[label_list.index(str(each, encoding = "utf-8"))] += 1
+                count += 1
         except ValueError:
             print(index)
 
-    print("Max Loss of Training Data:{}".format(max_loss))
+    print("False Postive = {}".format(count))
+    for index, each in enumerate(fn_label):
+        print('{Class}: {number}'.format(Class=label_list[index], number=each))
+
+    print("Max Loss of Training Data = {}".format(max_loss))
 
     min_loss = None
-    for index in range(count):
+    for index in range(input_data_test_set.shape[0]):
         try:
             loss = autoencoder.evaluate(input_data_test_set[index:index + 1], input_data_test_set[index:index + 1],
                                            verbose=0)
@@ -72,9 +71,9 @@ if __name__ == '__main__':
                 min_loss = loss
         except ValueError:
             print(index)
-
-    print("Min Loss of Testing Data:{}".format(min_loss))
-
+    
+    print("Min Loss of Testing Data = {}".format(min_loss))
+    
     loss = autoencoder.evaluate(input_data_train_set, input_data_train_set, verbose=0)
     print("Average Loss of Training Data = {}".format(loss))
     loss = autoencoder.evaluate(input_data_test_set, input_data_test_set, verbose=0)
