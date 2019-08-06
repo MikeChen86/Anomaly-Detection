@@ -13,6 +13,8 @@ if __name__ == '__main__':
 
     dataset = kddcup99.fetch_kddcup99()
     data = dataset.data
+    print(data[0])
+    '''
     labels = dataset.target
 
     # 數據預處理
@@ -41,9 +43,13 @@ if __name__ == '__main__':
     input_data_train_set = np.array(input_data_aware_set[:int(len(input_data_aware_set)*4/5)])
     input_data_aware_set = np.array(input_data_aware_set)
 
+    print(input_data_aware_set[0])
+    '''
+    '''
     autoencoder = load_model('autoencoder.h5')
 
     autoencoder.summary()
+    '''
     '''
     max_loss = None
     count = 0
@@ -78,6 +84,7 @@ if __name__ == '__main__':
     
     print("Min Loss of Agnostic Data = {}".format(min_loss))
     '''
+    '''
     print("    # Agnostic class is \"{}\" : {}".format(str(NEW_CLASS, encoding = "utf-8"),
                                                    input_data_agnostic_set.shape[0]))
     print("    # Agnostic class is all : {}".format(input_data_aware_set.shape[0]))
@@ -95,3 +102,4 @@ if __name__ == '__main__':
 
     loss = autoencoder.evaluate(input_data_agnostic_set, input_data_agnostic_set, verbose=0)
     print("    Average Loss of Agnostic Data = {}".format(loss))
+    '''

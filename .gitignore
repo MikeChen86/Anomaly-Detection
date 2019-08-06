@@ -1,3 +1,7 @@
 *.h5
 *.csv
 *.txt
+.idea/
+__pycache__/
+log/
+dataset/
