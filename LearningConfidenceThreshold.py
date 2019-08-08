@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     x_train, y_train, x_test, y_test, outlier_set = confidence_test_split(data, labels, label_list, label)
 
-    encoder = load_model('model/encoder_buffer_overflow.h5')
+    encoder = load_model('encoder.h5')
 
     '''
     class_count = [0 for _ in label_list]
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         class_avg[index][1] /= class_count[index]
     '''
 
-    model = load_model('model/classifier_buffer_overflow.h5', custom_objects={'RobustSoftmax': RobustSoftmax})
+    model = load_model('classifier.h5', custom_objects={'RobustSoftmax': RobustSoftmax})
     
     outlier_sample = outlier_set.shape[0]
     aware_sample = x_test.shape[0]
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     for outlier_distribution in outlier_predict:
         result_index = np.argmax(outlier_distribution)
         confidence = outlier_distribution[result_index]
-        if confidence < 0.95:
+        if confidence < 0.9:
             TP += 1
         else:
             FN += 1
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     for aware_distribution in aware_predict:
         result_index = np.argmax(aware_distribution)
         confidence = aware_distribution[result_index]
-        if confidence >= 0.95:
+        if confidence >= 0.9:
             TN += 1
         else:
             FP += 1

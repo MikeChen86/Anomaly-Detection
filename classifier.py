@@ -12,7 +12,7 @@ import csv
 
 class RobustSoftmax(Softmax):
     def call(self, inputs):
-        np.true_divide(inputs, 20)
+        np.true_divide(inputs, 200)
         return activations.softmax(inputs, axis=self.axis)
 
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     dataset = df.as_matrix()
     data = dataset[:, :41]
     labels = dataset[:, 41:42]
-    label = 'normal'
+    label = 'buffer_overflow'
 
     '''
     dataset = kddcup99.fetch_kddcup99()
