@@ -1,40 +1,55 @@
 import numpy as np
+import pandas as pd
 from sklearn.datasets import kddcup99
-from keras.layers import Input, Dense, Activation
+from keras.layers import Input, Dense, Activation, Softmax
+from keras import activations
 from keras.models import Model, Sequential, load_model
 from keras.losses import kullback_leibler_divergence
 from keras.callbacks import EarlyStopping
 from DataPreprocess import preprocess_data, preprocess_target, train_test_split, confidence_test_split
 import csv
-import datetime
-import os
-import errno
+
+
+class RobustSoftmax(Softmax):
+    def call(self, inputs):
+        np.true_divide(inputs, 20)
+        return activations.softmax(inputs, axis=self.axis)
+
 
 if __name__ == '__main__':
 
-    label_list = ['normal.', 'buffer_overflow.', 'loadmodule.', 'perl.', 'neptune.', 'smurf.',
-          'guess_passwd.', 'pod.', 'teardrop.', 'portsweep.', 'ipsweep.', 'land.', 'ftp_write.',
-          'back.', 'imap.', 'satan.', 'phf.', 'nmap.', 'multihop.', 'warezmaster.', 'warezclient.',
-          'spy.', 'rootkit.']
+    label_list = ['normal', 'buffer_overflow', 'loadmodule', 'perl', 'neptune', 'smurf',
+          'guess_passwd', 'pod', 'teardrop', 'portsweep', 'ipsweep', 'land', 'ftp_write',
+          'back', 'imap', 'satan', 'phf', 'nmap', 'multihop', 'warezmaster', 'warezclient',
+          'spy', 'rootkit']
     
     # label_list = [normal_list, dos_list, u2r_list, r2l_list, probe_list]
     # label_list = [normal_list, dos_list, u2r_list, r2l_list]
 
+    df = pd.read_csv('dataset/KDDTrain+.txt', header=None)
+    dataset = df.as_matrix()
+    data = dataset[:, :41]
+    labels = dataset[:, 41:42]
+    label = 'normal'
+
+    '''
     dataset = kddcup99.fetch_kddcup99()
     data = dataset.data
     labels = dataset.target
+    '''
 
     # 數據預處理
     data = preprocess_data(data)
 
-    x_train, y_train, x_test, y_test, outlier_set = confidence_test_split(data, labels, label_list, 'portsweep.')
+    x_train, y_train, x_test, y_test, outlier_set = confidence_test_split(data, labels, label_list, label)
     # x_train, y_train, x_test, y_test = train_test_split(data, labels, label_list)
-
+    
     # parameter
     DATA_LENGTH = data.shape[0]
     INPUT_SHAPE = data.shape[1]
     OUTPUT_SHAPE = y_train.shape[1]
     # parameter
+
     monitor = EarlyStopping(monitor='val_loss', min_delta=1e-3, patience=5, verbose=1, mode='auto')
 
     # Build Autoencoder
@@ -71,7 +86,7 @@ if __name__ == '__main__':
     x = Dense(units=100, kernel_initializer='random_normal', activation='relu')(input_layer)
     x = Dense(units=50, kernel_initializer='random_normal', activation='relu')(x)
     x = Dense(units=OUTPUT_SHAPE, kernel_initializer='random_normal')(x)
-    output_layer = Activation('softmax')(x)
+    output_layer = RobustSoftmax()(x)
 
     model = Model(ae_input_layer, output_layer)
     # confident_machine = Model(input_layer, x)
@@ -96,4 +111,3 @@ if __name__ == '__main__':
 
     # print(model.predict(x_test[:1]))
     # print(confident_machine.predict(x_test[:1]))
-    

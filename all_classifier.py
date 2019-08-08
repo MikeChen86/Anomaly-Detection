@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.datasets import kddcup99
 from keras.layers import Input, Dense, Dropout, Activation
 from keras.models import Model, Sequential, load_model
@@ -6,23 +7,30 @@ from keras.losses import kullback_leibler_divergence
 from keras.callbacks import EarlyStopping
 from DataPreprocess import preprocess_data, preprocess_target, train_test_split, confidence_test_split
 import csv
-import datetime
-import os
-import errno
+from classifier import RobustSoftmax
 
 if __name__ == '__main__':
 
-    label_list = ['normal.', 'buffer_overflow.', 'loadmodule.', 'perl.', 'neptune.', 'smurf.',
-                  'guess_passwd.', 'pod.', 'teardrop.', 'portsweep.', 'ipsweep.', 'land.', 'ftp_write.',
-                  'back.', 'imap.', 'satan.', 'phf.', 'nmap.', 'multihop.', 'warezmaster.', 'warezclient.',
-                  'spy.', 'rootkit.']
+    label_list = ['normal', 'buffer_overflow', 'loadmodule', 'perl', 'neptune', 'smurf',
+                  'guess_passwd', 'pod', 'teardrop', 'portsweep', 'ipsweep', 'land', 'ftp_write',
+                  'back', 'imap', 'satan', 'phf', 'nmap', 'multihop', 'warezmaster', 'warezclient',
+                  'spy', 'rootkit']
 
     # label_list = [normal_list, dos_list, u2r_list, r2l_list, probe_list]
     # label_list = [normal_list, dos_list, u2r_list, r2l_list]
 
+    df_train = pd.read_csv('dataset/KDDTrain+.txt', header=None)
+    df_test = pd.read_csv('dataset/KDDTest+.txt', header=None)
+    train_data = df_train.as_matrix()
+    test_data = df_test.as_matrix()
+    data = np.concatenate([train_data[:, :41], test_data[:, :41]], axis=0)
+    labels = np.concatenate([train_data[:, 41:42], test_data[:, 41:42]], axis=0)
+    print(data.shape)
+    '''
     dataset = kddcup99.fetch_kddcup99()
     data = dataset.data
     labels = dataset.target
+    '''
     # parameter
     DATA_LENGTH = data.shape[0]
     INPUT_SHAPE = data.shape[1]
@@ -67,7 +75,7 @@ if __name__ == '__main__':
         x = Dense(units=100, kernel_initializer='random_normal', activation='relu')(input_layer)
         x = Dense(units=50, kernel_initializer='random_normal', activation='relu')(x)
         x = Dense(units=OUTPUT_SHAPE, kernel_initializer='random_normal')(x)
-        output_layer = Activation('softmax')(x)
+        output_layer = RobustSoftmax()(x)
 
         model = Model(ae_input_layer, output_layer)
         model_weights = model.get_weights()
